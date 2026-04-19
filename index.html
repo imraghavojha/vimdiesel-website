@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vim Diesel</title>
+    <link rel="icon" href="logo.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --ink: #0f172a;
+        --muted: #5f6b7c;
+        --line: rgba(120, 135, 160, 0.2);
+        --surface: rgba(255, 255, 255, 0.82);
+        --surface-strong: rgba(255, 255, 255, 0.94);
+        --navy: #121c2f;
+        --navy-2: #19273e;
+        --green: #86d957;
+        --orange: #ff8a00;
+        --amber: #ffcf33;
+        --blue: #4d7fff;
+        --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 8% 14%, rgba(255, 138, 0, 0.12), transparent 18%),
+          radial-gradient(circle at 92% 18%, rgba(77, 127, 255, 0.12), transparent 22%),
+          linear-gradient(180deg, #fbfcff 0%, var(--bg) 100%);
+        font: 16px/1.55 "Space Grotesk", sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page-shell {
+        width: min(1320px, calc(100vw - 48px));
+        margin: 24px auto 48px;
+      }
+
+      .nav {
+        position: sticky;
+        top: 18px;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 28px;
+        padding: 14px 18px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(16px);
+        box-shadow: var(--shadow);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand img {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        object-fit: cover;
+        box-shadow: 0 12px 28px rgba(255, 138, 0, 0.22);
+      }
+
+      .brand-kicker {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .brand-name {
+        font-size: 21px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .hero {
+        display: block;
+      }
+
+      .hero-card,
+      .card,
+      .feature-panel {
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--surface);
+        backdrop-filter: blur(12px);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-copy {
+        padding: 34px;
+        background:
+          radial-gradient(circle at top left, rgba(255, 138, 0, 0.12), transparent 26%),
+          linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248, 250, 255, 0.88));
+      }
+
+      .eyebrow-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .eyebrow,
+      .pun-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 138, 0, 0.2);
+        background: rgba(255, 255, 255, 0.82);
+        color: #6f4318;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(3rem, 5vw, 5.2rem);
+        line-height: 0.95;
+        letter-spacing: -0.08em;
+      }
+
+      .hero-subhead {
+        margin: 18px 0 18px;
+        max-width: 680px;
+        font-size: 20px;
+        line-height: 1.45;
+        color: #243041;
+      }
+
+      .hero-thesis {
+        display: grid;
+        gap: 12px;
+        margin: 20px 0 28px;
+      }
+
+      .hero-thesis-item {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(120, 135, 160, 0.18);
+      }
+
+      .hero-thesis-item strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 50px;
+        padding: 0 18px;
+        border-radius: 999px;
+        border: 0;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .button.primary {
+        background: linear-gradient(135deg, #ff8a00, #ffb300);
+        color: #1c1308;
+      }
+
+      .button.secondary {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--ink);
+      }
+
+      .section {
+        margin-top: 34px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      .section-header h2 {
+        margin: 0;
+        font-size: clamp(2rem, 3vw, 3rem);
+        letter-spacing: -0.06em;
+      }
+
+      .section-header p {
+        max-width: 620px;
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 18px;
+      }
+
+      .feature-panel {
+        padding: 22px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,249,253,0.9));
+      }
+
+      .feature-panel h3 {
+        margin: 0 0 6px;
+        font-size: 24px;
+        letter-spacing: -0.05em;
+      }
+
+      .feature-panel p {
+        margin: 0 0 16px;
+        color: var(--muted);
+      }
+
+      .graph-shell {
+        border-radius: 24px;
+        background:
+          radial-gradient(circle at top, rgba(77, 127, 255, 0.22), transparent 35%),
+          linear-gradient(180deg, #101826 0%, #152236 100%);
+        padding: 18px;
+        min-height: 460px;
+        color: white;
+      }
+
+      .graph-stack {
+        display: grid;
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .graph-stage-card {
+        border-radius: 20px;
+        padding: 14px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .graph-stage {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.08);
+        color: rgba(255,255,255,0.82);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .graph-arrow {
+        display: grid;
+        place-items: center;
+        color: rgba(255,255,255,0.82);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+        letter-spacing: 0.08em;
+      }
+
+      .graph-panel {
+        border: 1px solid rgba(120, 135, 160, 0.18);
+        border-radius: 22px;
+        background: linear-gradient(180deg, #101826 0%, #152236 100%);
+        padding: 16px;
+        min-height: 404px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .graph-canvas {
+        position: relative;
+        width: 100%;
+        height: 330px;
+        margin-top: 14px;
+        border-radius: 18px;
+        background:
+          radial-gradient(circle at top, rgba(37, 99, 235, 0.24), transparent 34%),
+          radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.16), transparent 26%),
+          #0f172a;
+        overflow: hidden;
+      }
+
+      .graph-canvas svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        pointer-events: none;
+      }
+
+      .graph-edge {
+        stroke: rgba(148, 163, 184, 0.42);
+        stroke-width: 2;
+        fill: none;
+      }
+
+      .graph-nodes {
+        position: absolute;
+        inset: 0;
+      }
+
+      .graph-ball {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 10px;
+        border: 1px solid rgba(15, 23, 42, 0.1);
+        box-shadow: 0 16px 36px rgba(15, 23, 42, 0.1);
+        user-select: none;
+        cursor: grab;
+      }
+
+      .graph-ball:active {
+        cursor: grabbing;
+      }
+
+      .graph-ball.person { background: linear-gradient(180deg, #dbeafe, #bfdbfe); color: #0f172a; }
+      .graph-ball.workflow { background: linear-gradient(180deg, #dcfce7, #bbf7d0); color: #0f172a; }
+      .graph-ball.step { background: linear-gradient(180deg, #ede9fe, #ddd6fe); color: #0f172a; }
+      .graph-ball.memory { background: linear-gradient(180deg, #fee2e2, #fecaca); color: #0f172a; }
+      .graph-ball.tool { background: linear-gradient(180deg, #fef3c7, #fde68a); color: #0f172a; }
+      .graph-ball.formula { background: linear-gradient(180deg, #fde68a, #fcd34d); color: #0f172a; }
+      .graph-ball.email { background: linear-gradient(180deg, #cffafe, #a5f3fc); color: #0f172a; }
+      .graph-ball.update { background: linear-gradient(180deg, #d9f99d, #bef264); color: #0f172a; }
+
+      .graph-ball .label {
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.2;
+        max-width: 86%;
+      }
+
+      .graph-ball .meta {
+        font-size: 11px;
+        color: rgba(15, 23, 42, 0.66);
+        margin-top: 6px;
+      }
+
+      .graph-caption {
+        margin-top: 14px;
+        color: rgba(226, 232, 240, 0.76);
+        font-size: 14px;
+      }
+
+      .chat-shell {
+        display: grid;
+        gap: 16px;
+      }
+
+      .chat-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .chat-window {
+        border-radius: 24px;
+        padding: 20px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border: 1px solid rgba(120, 135, 160, 0.18);
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .chat-header strong {
+        font-size: 18px;
+      }
+
+      .context-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(77, 127, 255, 0.1);
+        color: #224a9a;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .chat-bubble {
+        padding: 14px 16px;
+        border-radius: 18px;
+        margin-bottom: 12px;
+        max-width: 92%;
+      }
+
+      .chat-bubble.user {
+        margin-left: auto;
+        background: #0f172a;
+        color: white;
+      }
+
+      .chat-bubble.assistant {
+        background: #eef4ff;
+        color: #193154;
+      }
+
+      .chat-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .chat-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: white;
+        border: 1px solid rgba(120, 135, 160, 0.2);
+        color: #344357;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .feature-mini-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .mini-card {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(120, 135, 160, 0.18);
+        background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,253,0.92));
+      }
+
+      .mini-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 19px;
+      }
+
+      .mono-card {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        color: #304056;
+        white-space: pre-wrap;
+        line-height: 1.65;
+      }
+
+      .usecases {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        padding: 22px;
+      }
+
+      .card-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(255, 138, 0, 0.1);
+        color: #7a4919;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .card h3 {
+        margin: 14px 0 8px;
+        font-size: 24px;
+        letter-spacing: -0.05em;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .card ul {
+        margin: 16px 0 0;
+        padding-left: 18px;
+        color: #304056;
+      }
+
+      .principles {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .footer {
+        margin-top: 32px;
+        padding: 22px 26px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: var(--surface-strong);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .footer-copy {
+        color: var(--muted);
+      }
+
+      @media (max-width: 1100px) {
+        .features,
+        .usecases,
+        .principles {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page-shell {
+          width: min(100vw - 24px, 1320px);
+          margin: 12px auto 24px;
+        }
+
+        .nav {
+          flex-direction: column;
+          align-items: start;
+        }
+
+        .nav-links,
+        .cta-row,
+        .section-header,
+        .footer {
+          flex-direction: column;
+          align-items: start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="nav">
+        <a class="brand" href="#">
+          <img src="logo.jpg" alt="Vim Diesel logo" />
+          <div>
+            <span class="brand-kicker">Personal Tool Factory</span>
+            <span class="brand-name">Vim Diesel</span>
+          </div>
+        </a>
+        <nav class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#use-cases">Use Cases</a>
+          <a href="#architecture">Architecture</a>
+        </nav>
+      </header>
+
+      <section class="hero">
+        <div class="hero-card hero-copy">
+          <div class="eyebrow-row">
+            <span class="eyebrow">Not browser automation</span>
+            <span class="eyebrow">Not a chatbot</span>
+            <span class="eyebrow">A personal tool factory</span>
+          </div>
+          <h1>Tools that learn how people actually work.</h1>
+          <p class="hero-subhead">
+            Vim Diesel observes repeated browser tasks, captures the worker's real transformation logic, and quietly turns it into a reusable tool. No setup wizard. No workflow recording ceremony. No "please teach the model."
+          </p>
+          <div class="hero-thesis">
+            <div class="hero-thesis-item">
+              <strong>Observed passively.</strong>
+              The system watches repeated work in context instead of asking the user to model it manually.
+            </div>
+            <div class="hero-thesis-item">
+              <strong>Generated automatically.</strong>
+              Repeated CSV cleanup, spreadsheet logic, response drafting, and other task-shaped workflows become standalone tools.
+            </div>
+            <div class="hero-thesis-item">
+              <strong>Used contextually.</strong>
+              The right tool appears when the right page, time, or follow-up request shows up.
+            </div>
+          </div>
+          <div class="cta-row">
+            <a class="button primary" href="#features">See The Product Story</a>
+            <a class="button secondary" href="#use-cases">Browse Use Cases</a>
+            <a class="button secondary" href="https://github.com/imraghavojha/hackp" target="_blank" rel="noreferrer">GitHub</a>
+            <a class="button secondary" href="https://devpost.com/software/vim-diesel" target="_blank" rel="noreferrer">Devpost</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="section-header">
+          <div>
+            <h2>Features That Feel Like Momentum</h2>
+          </div>
+          <p>
+            The product experience is designed to make repeated work disappear into one-click tools while keeping the human in control.
+          </p>
+        </div>
+
+        <div class="features">
+          <div class="feature-panel">
+            <h3>Graph Updates Over Time</h3>
+            <p>
+              The memory graph starts quiet and ends with a reusable tool plus an update path. This visual uses the same graph component language as the actual demo.
+            </p>
+            <div class="graph-shell">
+              <div class="graph-stack">
+                <div class="graph-stage-card">
+                  <span class="graph-stage">Start state</span>
+                  <div class="graph-panel">
+                    <div class="graph-canvas" id="graphCanvasStart">
+                      <svg id="graphEdgesStart" viewBox="0 0 760 280" preserveAspectRatio="none"></svg>
+                      <div class="graph-nodes" id="graphNodesStart"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="graph-arrow">FROM manual observation -> TO generated workflow</div>
+                <div class="graph-stage-card">
+                  <span class="graph-stage">End state</span>
+                  <div class="graph-panel">
+                    <div class="graph-canvas" id="graphCanvasEnd">
+                      <svg id="graphEdgesEnd" viewBox="0 0 760 280" preserveAspectRatio="none"></svg>
+                      <div class="graph-nodes" id="graphNodesEnd"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="graph-caption">
+                First, Vim sees Bob and a repeated workflow. Later, the graph carries remembered logic, a generated tool, and an update path from new context.
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-mini-grid">
+            <div class="feature-panel chat-shell">
+              <div>
+                <h3>Context-Aware Chat</h3>
+                <p>
+                  The assistant prompt changes based on the current situation. It doesn’t give the same answer to a raw export, a learned workflow, and a reviewer email.
+                </p>
+              </div>
+              <div class="chat-grid">
+                <div class="chat-window">
+                  <div class="chat-header">
+                    <strong>When Vim asks Bob to add the formula</strong>
+                    <span class="context-pill">Generate</span>
+                  </div>
+                  <div class="chat-bubble assistant">
+                    He created Priority with =IF(D2&gt;=200,"Tier 1","Tier 2"). Want me to add code so the CSV opens already cleaned next time?
+                  </div>
+                  <div class="chat-actions">
+                    <span class="chat-chip">Add code</span>
+                    <span class="chat-chip">Proactive tool generation</span>
+                  </div>
+                </div>
+
+                <div class="chat-window">
+                  <div class="chat-header">
+                    <strong>When Vim reads the email</strong>
+                    <span class="context-pill">Update</span>
+                  </div>
+                  <div class="chat-bubble assistant">
+                    I read the email. The next tool revision changes Priority to =IF(C2="Series C","Fast Track","Review").
+                  </div>
+                  <div class="chat-actions">
+                    <span class="chat-chip">Update formula</span>
+                    <span class="chat-chip">Read context from email</span>
+                    <span class="chat-chip">Update tool</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mini-card">
+              <strong>Generates tools, not brittle automation.</strong>
+              <p>
+                Browser automation records where a person clicks. Vim records how they think. That means a changed UI does not automatically break the underlying workflow.
+              </p>
+            </div>
+
+            <div class="mini-card mono-card">
+window.Tool = {
+  metadata: { name: "CSV to Excel Formula Sidecar" },
+  async transform(input) {
+    // preserves the learned worker logic
+    // and replays it without re-teaching
+  }
+}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="use-cases">
+        <div class="section-header">
+          <div>
+            <h2>Use Cases In Card Form</h2>
+          </div>
+          <p>
+            The same product surface works for sales ops, finance workflows, support response generation, and internal review loops.
+          </p>
+        </div>
+
+        <div class="usecases">
+          <article class="card">
+            <span class="card-tag">Sales Ops</span>
+            <h3>Lead export cleanup</h3>
+            <p>Turn repeated CSV formatting, tagging, sorting, and formula work into one contextual sidecar.</p>
+            <ul>
+              <li>CSV to Excel prep</li>
+              <li>Team-specific column rules</li>
+              <li>Manager-ready exports</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <span class="card-tag">Finance</span>
+            <h3>Spreadsheet review rituals</h3>
+            <p>Watch how analysts add formulas, mark revisions, and prep workbook outputs, then replay that workflow automatically.</p>
+            <ul>
+              <li>Formula templates</li>
+              <li>Next-day proactive helpers</li>
+              <li>Email-driven rule updates</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <span class="card-tag">Support</span>
+            <h3>Reply drafting</h3>
+            <p>Convert ticket + customer context into reusable reply tools with tone and escalation rules baked in.</p>
+            <ul>
+              <li>Context-aware prompts</li>
+              <li>Brand-safe wording</li>
+              <li>Faster human review</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <span class="card-tag">Internal Ops</span>
+            <h3>Reviewer feedback loops</h3>
+            <p>When a manager or analyst requests a change, Vim updates the generated tool instead of forcing the user to rebuild the flow manually.</p>
+            <ul>
+              <li>Captured preferences</li>
+              <li>Revision history</li>
+              <li>Tool versions over time</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-header">
+          <div>
+            <h2>Architecture At A Glance</h2>
+          </div>
+          <p>
+            A lightweight architecture keeps the system explainable: capture in the browser, orchestration in the backend, reasoning in the AI layer, and generated tools as reusable artifacts.
+          </p>
+        </div>
+
+        <div class="principles">
+          <article class="card">
+            <span class="card-tag">Extension</span>
+            <h3>Observe</h3>
+            <p>
+              The browser extension captures repeated actions, page context, and usage cues without making the worker stop to teach the system.
+            </p>
+          </article>
+          <article class="card">
+            <span class="card-tag">Backend</span>
+            <h3>Store + Trigger</h3>
+            <p>
+              Events, tool state, graph memory, and demo orchestration live in the backend. This is what decides when a tool should appear.
+            </p>
+          </article>
+          <article class="card">
+            <span class="card-tag">AI + Runtime</span>
+            <h3>Generate + Reuse</h3>
+            <p>
+              Vim turns repeated logic into self-contained tools that can be used through UI today and programmatically tomorrow.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>
+          <div class="brand" style="gap:10px;">
+            <img src="logo.jpg" alt="Vim Diesel logo" style="width:40px;height:40px;border-radius:12px;" />
+            <div>
+              <span class="brand-name" style="font-size:18px;">Vim Diesel</span>
+            </div>
+          </div>
+          <div class="footer-copy">A personal workflow agent that turns repeated work into reusable tools.</div>
+        </div>
+        <a class="button primary" href="#top">Back To Top</a>
+      </footer>
+    </div>
+
+    <script>
+      const baseSizeMap = { md: 98, lg: 126, xl: 152 };
+      const graphStates = {
+        start: {
+          baseWidth: 1100,
+          baseHeight: 460,
+          nodes: [
+            { id: "bob", label: "Bob", kind: "person", x: 100, y: 180, size: "lg" },
+            { id: "workflow", label: "Fintech shortlist prep", kind: "workflow", x: 305, y: 168, size: "xl", count: 0 }
+          ],
+          edges: [{ from: "bob", to: "workflow" }]
+        },
+        end: {
+          baseWidth: 1100,
+          baseHeight: 460,
+          nodes: [
+            { id: "bob", label: "Bob", kind: "person", x: 100, y: 180, size: "lg" },
+            { id: "workflow", label: "Fintech shortlist prep", kind: "workflow", x: 305, y: 168, size: "xl", count: 1 },
+            { id: "portal", label: "CSV export", kind: "step", x: 515, y: 88, size: "md" },
+            { id: "excel", label: "Excel cleanup", kind: "step", x: 520, y: 258, size: "md" },
+            { id: "memory", label: "Workflow memory", kind: "memory", x: 770, y: 168, size: "lg", count: 1 },
+            { id: "formula", label: "Priority formula", kind: "formula", x: 740, y: 70, size: "md" },
+            { id: "tool", label: "CSV to Excel Formula Sidecar v1", kind: "tool", x: 995, y: 168, size: "lg" },
+            { id: "email", label: "Analyst email", kind: "email", x: 770, y: 325, size: "md" },
+            { id: "update", label: "Formula update", kind: "update", x: 1000, y: 325, size: "md" }
+          ],
+          edges: [
+            { from: "bob", to: "workflow" },
+            { from: "workflow", to: "portal" },
+            { from: "workflow", to: "excel" },
+            { from: "workflow", to: "memory" },
+            { from: "excel", to: "formula" },
+            { from: "formula", to: "memory" },
+            { from: "memory", to: "tool" },
+            { from: "email", to: "memory" },
+            { from: "memory", to: "update" }
+          ]
+        }
+      };
+
+      function createInteractiveGraph(canvasId, nodesId, edgesId, stage) {
+        const canvas = document.getElementById(canvasId);
+        const nodesHost = document.getElementById(nodesId);
+        const edgesHost = document.getElementById(edgesId);
+        const runtime = {
+          nodes: [],
+          edges: stage.edges.map((edge) => ({ ...edge })),
+          dragNode: null,
+          dragOffsetX: 0,
+          dragOffsetY: 0
+        };
+
+        function computeScaledNodes() {
+          const rect = canvas.getBoundingClientRect();
+          const width = Math.max(rect.width, 1);
+          const height = Math.max(rect.height, 1);
+          const scale = Math.min(width / stage.baseWidth, height / stage.baseHeight);
+          const offsetX = (width - stage.baseWidth * scale) / 2;
+          const offsetY = (height - stage.baseHeight * scale) / 2;
+
+          runtime.nodes = stage.nodes.map((node) => ({
+            ...node,
+            x: node.x * scale + offsetX,
+            y: node.y * scale + offsetY,
+            diameter: (baseSizeMap[node.size] ?? 110) * scale
+          }));
+        }
+
+        function render() {
+          const rect = canvas.getBoundingClientRect();
+          const width = Math.max(rect.width, 1);
+          const height = Math.max(rect.height, 1);
+          edgesHost.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+          nodesHost.innerHTML = runtime.nodes
+            .map(
+              (node) => `
+                <div class="graph-ball ${node.kind}" data-node-id="${node.id}" style="left:${node.x}px;top:${node.y}px;width:${node.diameter}px;height:${node.diameter}px;">
+                  <div>
+                    <div class="label">${node.label}</div>
+                    ${node.count ? `<div class="meta">${node.count} runs</div>` : ""}
+                  </div>
+                </div>
+              `
+            )
+            .join("");
+
+          edgesHost.innerHTML = runtime.edges
+            .map((edge) => {
+              const from = runtime.nodes.find((node) => node.id === edge.from);
+              const to = runtime.nodes.find((node) => node.id === edge.to);
+              if (!from || !to) return "";
+              const bendX = (from.x + to.x) / 2;
+              const bendY = Math.min(from.y, to.y) - Math.min(42, Math.abs(to.x - from.x) * 0.08);
+              return `<path class="graph-edge" d="M ${from.x} ${from.y} Q ${bendX} ${bendY} ${to.x} ${to.y}"></path>`;
+            })
+            .join("");
+
+          nodesHost.querySelectorAll("[data-node-id]").forEach((element) => {
+            element.addEventListener("pointerdown", (event) => {
+              const node = runtime.nodes.find((item) => item.id === event.currentTarget.dataset.nodeId);
+              if (!node) return;
+              const rect = canvas.getBoundingClientRect();
+              runtime.dragNode = node;
+              runtime.dragOffsetX = event.clientX - rect.left - node.x;
+              runtime.dragOffsetY = event.clientY - rect.top - node.y;
+              event.currentTarget.setPointerCapture(event.pointerId);
+            });
+          });
+        }
+
+        computeScaledNodes();
+        render();
+
+        window.addEventListener("resize", () => {
+          computeScaledNodes();
+          render();
+        });
+
+        window.addEventListener("pointermove", (event) => {
+          if (!runtime.dragNode) return;
+          const rect = canvas.getBoundingClientRect();
+          const half = runtime.dragNode.diameter / 2;
+          runtime.dragNode.x = Math.min(rect.width - half, Math.max(half, event.clientX - rect.left - runtime.dragOffsetX));
+          runtime.dragNode.y = Math.min(rect.height - half, Math.max(half, event.clientY - rect.top - runtime.dragOffsetY));
+          render();
+        });
+
+        window.addEventListener("pointerup", () => {
+          runtime.dragNode = null;
+        });
+      }
+
+      createInteractiveGraph("graphCanvasStart", "graphNodesStart", "graphEdgesStart", graphStates.start);
+      createInteractiveGraph("graphCanvasEnd", "graphNodesEnd", "graphEdgesEnd", graphStates.end);
+    </script>
+  </body>
+</html>
